@@ -1,0 +1,190 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a Node in the Linked List
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Define the structure for a Node in the Binary Search Tree
+struct BSTNode {
+    int key;
+    struct BSTNode* left;
+    struct BSTNode* right;
+};
+
+// Function to create a new Node in the Linked List
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to append a Node to the end of the Linked List
+void append(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Node* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+// Function to create a new Node in the Binary Search Tree
+struct BSTNode* createBSTNode(int key) {
+    struct BSTNode* newNode = (struct BSTNode*)malloc(sizeof(struct BSTNode));
+    newNode->key = key;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a Node into the Binary Search Tree
+struct BSTNode* insertBST(struct BSTNode* root, int key) {
+    if (root == NULL) {
+        return createBSTNode(key);
+    }
+    if (key < root->key) {
+        root->left = insertBST(root->left, key);
+    } else if (key > root->key) {
+        root->right = insertBST(root->right, key);
+    }
+    return root;
+}
+
+// Function to perform an inorder traversal of the Binary Search Tree
+void inorderBST(struct BSTNode* root) {
+    if (root != NULL) {
+        inorderBST(root->left);
+        printf("%d ", root->key);
+        inorderBST(root->right);
+    }
+}
+
+// Function to search for a key in the Binary Search Tree
+struct BSTNode* searchBST(struct BSTNode* root, int key) {
+    if (root == NULL || root->key == key) {
+        return root;
+    }
+    if (key < root->key) {
+        return searchBST(root->left, key);
+    }
+    return searchBST(root->right, key);
+}
+
+// Function to find the minimum value Node in a Binary Search Tree
+struct BSTNode* findMinValueNode(struct BSTNode* node) {
+    struct BSTNode* current = node;
+    while (current->left != NULL) {
+        current = current->left;
+    }
+    return current;
+}
+
+// Function to delete a Node with a given key from the Binary Search Tree
+struct BSTNode* deleteBSTNode(struct BSTNode* root, int key) {
+    if (root == NULL) {
+        return root;
+    }
+    if (key < root->key) {
+        root->left = deleteBSTNode(root->left, key);
+    } else if (key > root->key) {
+        root->right = deleteBSTNode(root->right, key);
+    } else {
+        // Node with only one child or no child
+        if (root->left == NULL) {
+            struct BSTNode* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct BSTNode* temp = root->left;
+            free(root);
+            return temp;
+        }
+        // Node with two children: Get the inorder successor (smallest in the right subtree)
+        struct BSTNode* temp = findMinValueNode(root->right);
+        // Copy the inorder successor's content to this node
+        root->key = temp->key;
+        // Delete the inorder successor
+        root->right = deleteBSTNode(root->right, temp->key);
+    }
+    return root;
+}
+
+int main() {
+    struct Node* linkedList = NULL;
+    struct BSTNode* bstRoot = NULL;
+    int choice, data;
+
+    printf("Enter elements for the linked list (-1 to stop):\n");
+    while (1) {
+        scanf("%d", &data);
+        if (data == -1) {
+            break;
+        }
+        append(&linkedList, data);
+    }
+
+    // Convert the linked list to a Binary Search Tree
+    struct Node* current = linkedList;
+    while (current != NULL) {
+        bstRoot = insertBST(bstRoot, current->data);
+        current = current->next;
+    }
+
+    printf("Binary Search Tree (Inorder Traversal):\n");
+    inorderBST(bstRoot);
+    printf("\n");
+
+    while (1) {
+        printf("\nBinary Search Tree Operations:\n");
+        printf("1. Insert\n");
+        printf("2. Delete\n");
+        printf("3. Search\n");
+        printf("4. Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the value to insert: ");
+                scanf("%d", &data);
+                bstRoot = insertBST(bstRoot, data);
+                printf("Value %d has been inserted into the BST.\n", data);
+                printf("Updated Binary Search Tree (Inorder Traversal):\n");
+                inorderBST(bstRoot);
+                printf("\n");
+                break;
+            case 2:
+                printf("Enter the value to delete: ");
+                scanf("%d", &data);
+                bstRoot = deleteBSTNode(bstRoot, data);
+                printf("Value %d has been deleted from the BST.\n", data);
+                printf("Updated Binary Search Tree (Inorder Traversal):\n");
+                inorderBST(bstRoot);
+                printf("\n");
+                break;
+            case 3:
+                printf("Enter the value to search: ");
+                scanf("%d", &data);
+                if (searchBST(bstRoot, data) != NULL) {
+                    printf("%d found in the BST.\n", data);
+                } else {
+                    printf("%d not found in the BST.\n", data);
+                }
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    }
+
+    return 0;
+}

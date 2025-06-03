@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Stack {
+    int* arrayStack;
+    struct Node* linkedListStack;
+    int top;
+};
+
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+struct Stack* createStack(int capacity) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    stack->arrayStack = (int*)malloc(capacity * sizeof(int));
+    stack->linkedListStack = NULL;
+    stack->top = -1;
+    return stack;
+}
+
+void pushArray(struct Stack* stack, int item, int capacity) {
+    if (stack->top < capacity - 1) {
+        stack->arrayStack[++stack->top] = item;
+    } else {
+        printf("Array Stack is full. Cannot push.\n");
+    }
+}
+
+int popArray(struct Stack* stack) {
+    if (stack->top >= 0) {
+        return stack->arrayStack[stack->top--];
+    } else {
+        printf("Array Stack is empty.\n");
+        return -1;
+    }
+}
+
+void pushLinkedList(struct Stack* stack, int item) {
+    struct Node* node = newNode(item);
+    node->next = stack->linkedListStack;
+    stack->linkedListStack = node;
+}
+
+int popLinkedList(struct Stack* stack) {
+    if (stack->linkedListStack != NULL) {
+        int poppedItem = stack->linkedListStack->data;
+        struct Node* temp = stack->linkedListStack;
+        stack->linkedListStack = stack->linkedListStack->next;
+        free(temp);
+        return poppedItem;
+    } else {
+        printf("Linked List Stack is empty.\n");
+        return -1;
+    }
+}
+
+void display(struct Stack* stack, int capacity) {
+    printf("Array Stack: ");
+    for (int i = 0; i <= stack->top; i++) {
+        printf("%d ", stack->arrayStack[i]);
+    }
+    printf("\nLinked List Stack: ");
+    struct Node* node = stack->linkedListStack;
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    int capacity;
+    printf("Enter the capacity of the stack: ");
+    scanf("%d", &capacity);
+
+    struct Stack* stack = createStack(capacity);
+    int input;
+
+    printf("Enter the stack/array elements (%d elements): ", capacity);
+    for (int i = 0; i < capacity; i++) {
+        scanf("%d", &input);
+        pushArray(stack, input, capacity);
+        pushLinkedList(stack, input);
+    }
+
+    while (1) {
+        printf("\nStack Operations:\n");
+        printf("1. Push (Array)\n");
+        printf("2. Push (Linked List)\n");
+        printf("3. Pop (Array)\n");
+        printf("4. Pop (Linked List)\n");
+        printf("5. Display\n");
+        printf("6. Quit\n");
+
+        int choice;
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if (stack->top < capacity - 1) {
+                    int item;
+                    printf("Enter element to push (Array): ");
+                    scanf("%d", &item);
+                    pushArray(stack, item, capacity);
+                } else {
+                    printf("Array Stack is full. Cannot push.\n");
+                }
+                break;
+            case 2:
+                {
+                    int item;
+                    printf("Enter element to push (Linked List): ");
+                    scanf("%d", &item);
+                    pushLinkedList(stack, item);
+                }
+                break;
+            case 3:
+                printf("Popped from Array Stack: %d\n", popArray(stack));
+                break;
+            case 4:
+                printf("Popped from Linked List Stack: %d\n", popLinkedList(stack));
+                break;
+            case 5:
+                display(stack, capacity);
+                break;
+            case 6:
+                free(stack->arrayStack);
+                while (stack->linkedListStack != NULL) {
+                    struct Node* temp = stack->linkedListStack;
+                    stack->linkedListStack = stack->linkedListStack->next;
+                    free(temp);
+                }
+                free(stack);
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}

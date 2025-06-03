@@ -1,0 +1,27 @@
+#include <stdio.h>//implementing structures using pointers
+#include <string.h>
+// Define a structure for employee details
+struct Employee {
+ char name[50];
+ int employeeId;
+ float salary; };
+int main() {
+ struct Employee *empPtr;
+ empPtr = (struct Employee *)malloc(sizeof(struct Employee));
+ if (empPtr == NULL) {
+ printf("Memory allocation failed\n");
+ return 1;
+}
+ printf("Enter employee name: ");
+ scanf("%s", empPtr->name);
+ printf("Enter employee ID: ");
+ scanf("%d", &empPtr->employeeId);
+ printf("Enter employee salary: ");
+ scanf("%f", &empPtr->salary);
+ printf("\nEmployee Details:\n");
+ printf("Name: %s\n", empPtr->name);
+ printf("Employee ID: %d\n", empPtr->employeeId);
+ printf("Salary: %.2f\n", empPtr->salary);
+ free(empPtr);
+ return 0;
+}

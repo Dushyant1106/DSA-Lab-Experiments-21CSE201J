@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+// Define the structure of a binary tree node
+struct TreeNode {
+    int data;
+};
+
+// Function to create a new node
+struct TreeNode* createNode(int data) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    newNode->data = data;
+    return newNode;
+}
+
+// Function to insert a new node into the tree
+int insert(struct TreeNode tree[], int size, int data) {
+    if (size >= MAX_SIZE) {
+        printf("Tree is full. Cannot insert more nodes.\n");
+        return size;
+    }
+    tree[size] = *createNode(data);
+    return size + 1;
+}
+
+// Function to display the tree using an inorder traversal
+void inorderTraversal(struct TreeNode tree[], int index, int size) {
+    if (index >= size) {
+        return;
+    }
+    inorderTraversal(tree, 2 * index + 1, size); // Left child
+    printf("%d ", tree[index].data);
+    inorderTraversal(tree, 2 * index + 2, size); // Right child
+}
+
+int main() {
+    struct TreeNode tree[MAX_SIZE];
+    int size = 0;
+
+    printf("Enter the number of nodes: ");
+    int numNodes;
+    scanf("%d", &numNodes);
+
+    printf("Enter the values of the nodes:\n");
+    for (int i = 0; i < numNodes; i++) {
+        int data;
+        scanf("%d", &data);
+        size = insert(tree, size, data);
+    }
+
+    // Perform an inorder traversal to display the tree
+    printf("Inorder Traversal: ");
+    inorderTraversal(tree, 0, size);
+    printf("\n");
+
+    return 0;
+}

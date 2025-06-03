@@ -1,0 +1,66 @@
+#include<stdio.h>
+int main()
+{
+    int list[10];
+    int i,n,f,value,pos;
+printf("Enter the number of elements: ");
+scanf("%d",&n);
+for(i=0;i<n;i++)
+{
+    printf("Enter element %d : ",i+1);
+    scanf("%d",&list[i]);
+}
+printf("Enter the value of expression: ");
+scanf("%d",&f);
+switch(f)
+{
+    case 1:
+    printf("Enter the element to be inserted: ");
+    scanf("%d",&value);
+    printf("Enter the position of the element: ");
+    scanf("%d",&pos);
+    for(i=n-1;i>=pos;i--)
+    {
+        list[i+1]=list[i];
+    }
+    list[pos-1]=value;
+    
+    for(i=0;i<=n;i++)
+    {
+        printf("%d\t",list[i]);
+    }
+    break;
+    
+    case 2:
+    printf("Enter the position of the element: ");
+    scanf("%d",&pos);
+    for(i=pos-1;i<n-1;i++)
+    {
+        list[i]=list[i+1];
+    }
+    for(i=0;i<n-1;i++)
+    {
+        printf("%d\t",list[i]);
+    }
+    case 3:
+     int count=0;
+     printf("Enter the element you want to search: /n");
+     scanf("%d",&value);
+     for(i=0;i<n;i++)
+     {
+         if(list[i]==value)
+         {
+             count++;
+         }
+     }
+     if(count>0)
+     {
+         printf("Element found");
+     }
+     else
+     {
+         printf("Element not found: ");
+     }
+}
+return 0;
+}

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int **a, **b, **c;
+    int a_r, a_c, b_r, b_c, i, j, k;
+    printf("Enter the rows and columns of matrix a: ");
+    scanf("%d %d", &a_r, &a_c);
+    printf("Enter the rows and columns of matrix b: ");
+    scanf("%d %d", &b_r, &b_c);
+
+    if (a_c != b_r)
+    {
+        printf("Matrix multiplication not possible.\n");
+        return 1;
+    }
+
+    a = (int*)malloc(a_r * sizeof(int));
+    for (i = 0; i < a_r; i++)
+    {
+        a[i] = (int*)malloc(a_c * sizeof(int));
+    }
+
+    b = (int*)malloc(b_r * sizeof(int));
+    for (i = 0; i < b_r; i++)
+    {
+        b[i] = (int*)malloc(b_c * sizeof(int));
+    }
+
+    c = (int*)malloc(a_r * sizeof(int));
+    for (i = 0; i < a_r; i++)
+    {
+        c[i] = (int*)malloc(b_c * sizeof(int));
+    }
+
+    printf("Enter elements of matrix a:\n");
+    for (i = 0; i < a_r; i++)
+    {
+        for (j = 0; j < a_c; j++)
+        {
+            scanf("%d", &a[i][j]);
+        }
+    }
+
+    printf("Enter elements of matrix b:\n");
+    for (i = 0; i < b_r; i++)
+    {
+        for (j = 0; j < b_c; j++)
+        {
+            scanf("%d", &b[i][j]);
+        }
+    }
+
+    for (i = 0; i < a_r; i++)
+    {
+        for (j = 0; j < b_c; j++)
+        {
+            c[i][j] = 0;
+            for (k = 0; k < a_c; k++)
+            {
+                c[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+
+    printf("Result of matrix multiplication (c = a * b):\n");
+    for (i = 0; i < a_r; i++)
+    {
+        for (j = 0; j < b_c; j++)
+        {
+            printf("%d ", c[i][j]);
+        }
+        printf("\n");
+    }
+
+
+    return 0;
+}

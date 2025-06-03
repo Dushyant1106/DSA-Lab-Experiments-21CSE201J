@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+#define MAX_VERTICES 100
+
+int graph[MAX_VERTICES][MAX_VERTICES];
+int numVertices = 0;
+
+void initializeGraph() {
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        for (int j = 0; j < MAX_VERTICES; j++) {
+            graph[i][j] = 0;
+        }
+    }
+}
+
+void addEdge(int start, int end) {
+    if (start >= 0 && start < numVertices && end >= 0 && end < numVertices) {
+        graph[start][end] = 1;
+    } else {
+        printf("Invalid vertices!\n");
+    }
+}
+
+void displayGraph() {
+    printf("Graph (Adjacency Matrix):\n");
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            printf("%d ", graph[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    printf("Enter the number of vertices: ");
+    scanf("%d", &numVertices);
+
+    if (numVertices > MAX_VERTICES) {
+        printf("Too many vertices. Increase MAX_VERTICES and try again.\n");
+        return 1;
+    }
+
+    initializeGraph();
+
+    int numEdges;
+    printf("Enter the number of edges: ");
+    scanf("%d", &numEdges);
+
+    for (int i = 0; i < numEdges; i++) {
+        int start, end;
+        printf("Enter edge %d (start end): ", i + 1);
+        scanf("%d %d", &start, &end);
+        addEdge(start, end);
+    }
+
+    displayGraph();
+
+    return 0;
+}

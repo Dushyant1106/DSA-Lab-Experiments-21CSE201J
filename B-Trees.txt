@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_KEYS 3 // Change this value for different order B-trees
+
+struct Node {
+    int n; // Number of keys in the node
+    int keys[MAX_KEYS];
+    struct Node* children[MAX_KEYS + 1];
+};
+
+struct Node* createNode() {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->n = 0;
+    for (int i = 0; i <= MAX_KEYS; i++) {
+        newNode->children[i] = NULL;
+    }
+    return newNode;
+}
+
+void splitChild(struct Node* parent, int childIndex) {
+    struct Node* newNode = createNode();
+    struct Node* child = parent->children[childIndex];
+    parent->n++;
+
+    for (int i = parent->n - 1; i > childIndex; i--) {
+        parent->keys[i] = parent->keys[i - 1];
+        parent->children[i + 1] = parent->children[i];
+    }
+
+    parent->keys[childIndex] = child->keys[MAX_KEYS / 2];
+    parent->children[childIndex + 1] = newNode;
+
+    for (int i = 0; i < MAX_KEYS / 2; i++) {
+        newNode->keys[i] = child->keys[i + (MAX_KEYS / 2) + 1];
+        newNode->children[i] = child->children[i + (MAX_KEYS / 2) + 1];
+    }
+    newNode->children[MAX_KEYS / 2] = child->children[MAX_KEYS];
+
+    child->n = MAX_KEYS / 2;
+    newNode->n = MAX_KEYS / 2;
+}
+
+void insert(struct Node** root, int key) {
+    if (*root == NULL) {
+        *root = createNode();
+        (*root)->keys[0] = key;
+        (*root)->n = 1;
+    } else {
+        struct Node* current = *root;
+        if (current->n == MAX_KEYS) {
+            struct Node* newRoot = createNode();
+            newRoot->children[0] = *root;
+            *root = newRoot;
+            splitChild(newRoot, 0);
+            current = newRoot;
+        }
+        int i = current->n - 1;
+        while (i >= 0 && key < current->keys[i]) {
+            current->keys[i + 1] = current->keys[i];
+            current->children[i + 2] = current->children[i + 1];
+            i--;
+        }
+        // Check for duplicate keys and don't insert them
+        if (i >= 0 && key == current->keys[i]) {
+            return;
+        }
+        current->keys[i + 1] = key;
+        current->n++;
+    }
+}
+
+void inorderTraversal(struct Node* root) {
+    if (root != NULL) {
+        for (int i = 0; i < root->n; i++) {
+            inorderTraversal(root->children[i]);
+            printf("%d ", root->keys[i]);
+        }
+        inorderTraversal(root->children[root->n]);
+    }
+}
+
+int main() {
+    struct Node* root = NULL;
+    int n, key;
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter %d elements:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &key);
+        insert(&root, key);
+    }
+
+    printf("Inorder traversal of the B-tree: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    printf("Enter the element to insert: ");
+    scanf("%d", &key);
+    insert(&root, key);
+
+    printf("Inorder traversal after insertion: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    return 0;
+}
